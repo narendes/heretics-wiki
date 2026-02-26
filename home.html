@@ -194,26 +194,26 @@
 <nav class="main-nav">
     <a href="home.html" class="nav-logo-link" id="game-title">Loading...</a>
     <div class="nav-links">
-        <a href="episodes.html">Episodes</a>
         <a href="characters.html">Characters</a>
-        <a href="factions.html">Factions</a>
-        <a href="dreams.html">Dreams</a>
         <a href="maps.html">Maps</a>
+        <a href="factions.html">Factions</a>
+        <a href="episodes.html">Episodes</a>
+        <a href="dreams.html">Dreams</a>
     </div>
 </nav>
 
 <main class="dashboard-container">
     <section class="clock-hero">
         <div class="clock-display">
-            <span class="clock-label">Reality</span>
+            <span class="clock-label">Oakville</span>
             <h2 id="clock-90s">00:00</h2>
             <p class="clock-date" id="date-90s">Loading...</p>
         </div>
 
         <div class="clock-display magic-realm">
-            <span class="clock-label">Magical Realm</span>
+            <span class="clock-label">Tallura</span>
             <h2 id="clock-magic">00:00</h2>
-            <p class="clock-date" id="date-magic">Calculating...</p>
+            <p class="clock-date" id="date-magic">Loading...</p>
         </div>
     </section>
 
@@ -229,7 +229,7 @@
         <div class="widget-notification">
             <div class="widget-accent"></div>
             <div class="widget-content">
-                <span class="widget-title">Last Recap</span>
+                <span class="widget-title">Last Session</span>
                 <p id="last-synopsis" class="truncate">...</p>
             </div>
         </div>
@@ -237,7 +237,7 @@
         <div class="widget-notification">
             <div class="widget-accent"></div>
             <div class="widget-content">
-                <span class="widget-title">Featured: <span id="pc-name">...</span></span>
+                <span class="widget-title">Featured NPC: <span id="pc-name">...</span></span>
                 <p id="pc-desc" class="truncate">...</p>
             </div>
         </div>
@@ -272,7 +272,7 @@
             document.getElementById('clock-90s').innerText = `${rHours}:${rMins}`;
 
             // Format Date String
-            const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' };
             document.getElementById('date-90s').innerText = realityDate.toLocaleDateString('en-US', dateOptions);
 
             // 4. Tallurian Clock Logic (Requires convertToTallurian from timeEngine.js)

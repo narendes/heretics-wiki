@@ -1,12 +1,12 @@
 {
   "gameTitle": "HERETICS",
   "entryText": "Enter Here",
-  "nextSession": "Friday, October 13th @ 7:00 PM",
-  "currentRealityTime": "1995-10-13T22:30",
+  "nextSession": "Sunday, March 1st, 11am - 3pm",
+  "currentRealityTime": "1991-01-17T15:00",
   "currentYear90s": 1990,
-  "lastSynopsis": "The party discovered a strange VHS tape in the basement of the abandoned asylum. As the static cleared, a voice from the Magical Realm began to speak...",
+  "lastSynopsis": "The gang defeated an undead creature, only to discover it was the mummified remains of a cheerleader's relative...",
   "featuredPC": {
-    "name": "Julian Vane",
-    "desc": "A disillusioned private eye who saw something he wasn't supposed to in '92."
+    "name": "Applebee the Myrehare",
+    "desc": "A talking rodent who trained the rebel leader, Pomona of the Myre, in survival skills and combat"
   }
 }
