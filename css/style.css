@@ -1,0 +1,188 @@
+:root {
+    --bg-dark: #050505;
+    --bg-card: #0a0a0a;
+    --crimson: #8b0000;
+    --gold: #d4af37;
+    --text-main: #e0e0e0;
+    --horror-font: 'Crimson Text', serif;
+    --nav-font: 'Cinzel', serif;
+}
+
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Landing Page Background */
+.landing-body {
+    background-color: #0a0a0a; /* Near black */
+    background-image: radial-gradient(circle, #1a0f0f 0%, #050505 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.landing-container {
+    text-align: center;
+}
+
+/* The Stephen King / Horror Font Style */
+.game-title {
+    font-family: 'Crimson Text', serif;
+    font-size: 5rem;
+    color: #8b0000; /* Deep Crimson */
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8),
+    0 0 15px rgba(212, 175, 55, 0.3); /* Soft Gold Glow */
+    margin-bottom: 20px;
+}
+
+/* The "Enter" link */
+.enter-link {
+    font-family: 'Cinzel', serif; /* A more "fantasy/runic" feel */
+    color: #d4af37; /* Antique Gold */
+    text-decoration: none;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.5s ease;
+    opacity: 0.8;
+}
+
+.enter-link:hover {
+    opacity: 1;
+    color: #ff0000; /* Bright Crimson on hover */
+    letter-spacing: 6px;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+}
+
+/* Update the Home Body to match Landing */
+.home-body {
+    background-color: var(--bg-dark);
+    background-image: radial-gradient(circle, #1a0f0f 0%, #050505 100%);
+    color: var(--text-main);
+    font-family: var(--horror-font);
+}
+
+/* The Clocks - Dark & Cinematic */
+.clock-hero {
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+    padding: 3rem 1rem;
+}
+
+.clock-display h2 {
+    font-family: var(--horror-font);
+    font-size: 7rem;
+    color: var(--crimson);
+    text-shadow: 0 0 20px rgba(139, 0, 0, 0.4); /* Bloody glow */
+    margin-bottom: -10px;
+}
+
+.clock-date {
+    font-family: var(--nav-font);
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* The Notification Widgets - Gothic Style */
+.notification-stack {
+    max-width: 550px;
+    margin: 0 auto;
+}
+
+.widget-notification {
+    background: var(--bg-card);
+    border-left: 4px solid var(--crimson); /* The accent strip */
+    border-right: 1px solid rgba(212, 175, 55, 0.2);
+    margin-bottom: 15px;
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 10px 10px 20px rgba(0,0,0,0.8);
+    transition: all 0.4s ease;
+}
+
+.widget-notification:hover {
+    border-left-color: var(--gold);
+    transform: translateX(10px); /* Slides right like a drawer */
+    background: #111;
+}
+
+.widget-icon {
+    font-size: 1.8rem;
+    color: var(--gold);
+    filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
+}
+
+.widget-title {
+    font-family: var(--nav-font);
+    color: var(--gold);
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+}
+
+.widget-content p {
+    font-style: italic; /* Makes the synopsis feel like a novel snippet */
+    color: #bbb;
+}
+
+.main-nav {
+    border-bottom: 1px solid var(--gold);
+    box-shadow: 0 5px 15px rgba(0,0,0,1);
+}
+
+.nav-logo {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    font-size: 1.4rem;
+}
+
+.nav-links a {
+    position: relative;
+}
+
+.nav-links a:hover::after, .nav-links a.active::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: var(--crimson);
+    bottom: -5px;
+    left: 0;
+}
+
+/* Widget Accent replacement for emojis */
+.widget-accent {
+    width: 2px;
+    height: 40px;
+    background: var(--gold);
+    box-shadow: 0 0 10px var(--crimson);
+    flex-shrink: 0;
+}
+
+.widget-notification:hover .widget-accent {
+    background: var(--crimson);
+    box-shadow: 0 0 15px var(--gold);
+    width: 4px;
+    transition: 0.3s ease;
+}
+
+/* Ensure the clock labels are positioned correctly */
+.clock-label {
+    display: block;
+    font-family: var(--nav-font);
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: -15px;
+    opacity: 0.7;
+}

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Veil | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --bg-card: #0a0a0a;
+            --crimson: #8b0000;
+            --gold: #d4af37;
+            --text-main: #e0e0e0;
+            --horror-font: 'Crimson Text', serif;
+            --nav-font: 'Cinzel', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body.home-body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle, #1a0f0f 0%, #050505 100%);
+            color: var(--text-main);
+            font-family: var(--horror-font);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation */
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--gold);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+        }
+
+        .nav-logo-link {
+            text-decoration: none;
+            color: var(--gold);
+            font-family: var(--nav-font);
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo-link:hover { color: var(--crimson); }
+
+        .nav-links a {
+            color: var(--gold);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-family: var(--nav-font);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .nav-links a:hover {
+            color: var(--crimson);
+            text-shadow: 0 0 8px rgba(139, 0, 0, 0.6);
+        }
+
+        /* Main Content Layout */
+        .dashboard-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4rem;
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        /* Large Clocks Section */
+        .clock-hero {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .clock-display { text-align: left; }
+
+        .clock-label {
+            display: block;
+            font-family: var(--nav-font);
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: -1rem;
+            opacity: 0.8;
+        }
+
+        .clock-display h2 {
+            font-size: 7rem;
+            font-weight: 700;
+            color: var(--crimson);
+            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0 0 20px rgba(139, 0, 0, 0.3);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .clock-date {
+            font-family: var(--nav-font);
+            color: var(--gold);
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+            letter-spacing: 1px;
+        }
+
+        /* Notification Stack Section */
+        .notification-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .widget-notification {
+            background: rgba(10, 10, 10, 0.7);
+            border-left: 3px solid var(--crimson);
+            border-right: 1px solid rgba(212, 175, 55, 0.1);
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 10px 10px 25px rgba(0,0,0,0.7);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+        }
+
+        .widget-notification:hover {
+            transform: translateX(15px);
+            background: rgba(20, 10, 10, 0.9);
+            border-left-color: var(--gold);
+        }
+
+        .widget-accent {
+            width: 1px;
+            height: 35px;
+            background: var(--gold);
+            box-shadow: 0 0 10px var(--crimson);
+            opacity: 0.6;
+        }
+
+        .widget-title {
+            font-family: var(--nav-font);
+            color: var(--gold);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .widget-content p {
+            font-size: 1rem;
+            color: #bbb;
+            font-style: italic;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .truncate {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-container { flex-direction: column; gap: 2rem; }
+            .clock-display h2 { font-size: 5rem; }
+            .main-nav { flex-direction: column; gap: 1.5rem; padding: 1.5rem; }
+            .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+            .nav-links a { margin: 0; }
+        }
+    </style>
+</head>
+<body class="home-body">
+
+<nav class="main-nav">
+    <a href="home.html" class="nav-logo-link" id="game-title">Loading...</a>
+    <div class="nav-links">
+        <a href="episodes.html">Episodes</a>
+        <a href="characters.html">Characters</a>
+        <a href="factions.html">Factions</a>
+        <a href="dreams.html">Dreams</a>
+        <a href="maps.html">Maps</a>
+    </div>
+</nav>
+
+<main class="dashboard-container">
+    <section class="clock-hero">
+        <div class="clock-display">
+            <span class="clock-label">Reality</span>
+            <h2 id="clock-90s">00:00</h2>
+            <p class="clock-date" id="date-90s">Loading...</p>
+        </div>
+
+        <div class="clock-display magic-realm">
+            <span class="clock-label">Magical Realm</span>
+            <h2 id="clock-magic">00:00</h2>
+            <p class="clock-date" id="date-magic">Calculating...</p>
+        </div>
+    </section>
+
+    <section class="notification-stack">
+        <div class="widget-notification">
+            <div class="widget-accent"></div>
+            <div class="widget-content">
+                <span class="widget-title">Next Session</span>
+                <p id="next-session-date">...</p>
+            </div>
+        </div>
+
+        <div class="widget-notification">
+            <div class="widget-accent"></div>
+            <div class="widget-content">
+                <span class="widget-title">Last Recap</span>
+                <p id="last-synopsis" class="truncate">...</p>
+            </div>
+        </div>
+
+        <div class="widget-notification">
+            <div class="widget-accent"></div>
+            <div class="widget-content">
+                <span class="widget-title">Featured: <span id="pc-name">...</span></span>
+                <p id="pc-desc" class="truncate">...</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- In your WebStorm environment, ensure these files exist in these paths -->
+<script src="js/timeEngine.js"></script>
+<script>
+    /**
+     * This internal logic ensures that if the external loader fails or
+     * is slow, the dashboard still attempts to render using current data.
+     */
+    async function loadDashboard() {
+        try {
+            // 1. Fetch config (In WebStorm, this requires a local server or proper paths)
+            const response = await fetch('data/config.json');
+            const config = await response.json();
+
+            // 2. Update Basic UI
+            document.getElementById('game-title').innerText = config.gameTitle || "THE VEIL";
+            document.getElementById('next-session-date').innerText = config.nextSession || "TBD";
+            document.getElementById('last-synopsis').innerText = config.lastSynopsis || "Recap pending...";
+            document.getElementById('pc-name').innerText = config.featuredPC?.name || "Unknown";
+            document.getElementById('pc-desc').innerText = config.featuredPC?.desc || "No data.";
+
+            // 3. Reality Clock Logic
+            const realityDate = new Date(config.currentRealityTime);
+            // Format: HH:MM
+            const rHours = realityDate.getHours().toString().padStart(2, '0');
+            const rMins = realityDate.getMinutes().toString().padStart(2, '0');
+            document.getElementById('clock-90s').innerText = `${rHours}:${rMins}`;
+
+            // Format Date String
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            document.getElementById('date-90s').innerText = realityDate.toLocaleDateString('en-US', dateOptions);
+
+            // 4. Tallurian Clock Logic (Requires convertToTallurian from timeEngine.js)
+            if (typeof convertToTallurian === 'function') {
+                const t = convertToTallurian(config.currentRealityTime);
+                const tMins = t.minute.toString().padStart(2, '0');
+                document.getElementById('clock-magic').innerText = `${t.hour}:${tMins}`;
+                document.getElementById('date-magic').innerText = `${t.day} ${t.month} ${t.year}`;
+            } else {
+                console.error("timeEngine.js failed to load or convertToTallurian is missing.");
+                document.getElementById('date-magic').innerText = "Engine Error";
+            }
+
+        } catch (error) {
+            console.error("Error loading config.json:", error);
+            // Fallback for previewing without config.json
+            document.getElementById('date-magic').innerText = "Check config.json path";
+        }
+    }
+
+    // Run when window is ready
+    window.addEventListener('DOMContentLoaded', loadDashboard);
+</script>
+</body>
+</html>
