@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HERETICS | Characters</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --bg-card: #0a0a0a;
+            --crimson: #8b0000;
+            --gold: #d4af37;
+            --text-main: #e0e0e0;
+            --horror-font: 'Crimson Text', serif;
+            --nav-font: 'Cinzel', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle, #1a0f0f 0%, #050505 100%);
+            color: var(--text-main);
+            font-family: var(--horror-font);
+            min-height: 100vh;
+        }
+
+        /* Nav (Synced with Home) */
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--gold);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+        }
+
+        .nav-logo-link {
+            text-decoration: none;
+            color: var(--gold);
+            font-family: var(--nav-font);
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+
+        .nav-logo-link:hover { color: var(--crimson); }
+
+        .nav-links a {
+            color: var(--gold);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-family: var(--nav-font);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .nav-links a:hover { color: var(--crimson); text-shadow: 0 0 8px var(--crimson); }
+
+        /* Filter Controls */
+        .controls-container {
+            max-width: 1200px;
+            margin: 3rem auto 2rem;
+            padding: 0 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        #char-search {
+            width: 100%;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 1rem 1.5rem;
+            font-family: var(--horror-font);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #char-search:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        .tag-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            padding: 0.4rem 1rem;
+            background: rgba(139, 0, 0, 0.1);
+            border: 1px solid var(--crimson);
+            color: var(--gold);
+            font-family: var(--nav-font);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-tag.active, .filter-tag:hover {
+            background: var(--crimson);
+            color: white;
+        }
+
+        /* Character Grid */
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+
+        .char-card {
+            background: rgba(10, 10, 10, 0.7);
+            border-left: 3px solid var(--crimson);
+            border-right: 1px solid rgba(212, 175, 55, 0.1);
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            box-shadow: 10px 10px 25px rgba(0,0,0,0.7);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .char-card:hover {
+            transform: translateY(-5px);
+            background: rgba(20, 10, 10, 0.9);
+            border-left-color: var(--gold);
+        }
+
+        .char-img {
+            width: 100px;
+            height: 100px;
+            min-width: 100px;
+            background: #1a1a1a;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            object-fit: cover;
+        }
+
+        .char-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .char-name {
+            font-family: var(--nav-font);
+            color: var(--gold);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .char-desc {
+            font-size: 0.95rem;
+            color: #bbb;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .char-tags {
+            margin-top: 0.8rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .mini-tag {
+            font-size: 0.6rem;
+            color: var(--crimson);
+            border: 1px solid rgba(139, 0, 0, 0.4);
+            padding: 1px 5px;
+            text-transform: uppercase;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .char-card { flex-direction: column; align-items: center; text-align: center; }
+            .character-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="main-nav">
+    <a href="home.html" class="nav-logo-link" id="game-title">Loading...</a>
+    <div class="nav-links">
+        <a href="characters.html" style="color: var(--crimson)">Characters</a>
+        <a href="maps.html">Maps</a>
+        <a href="factions.html">Factions</a>
+        <a href="episodes.html">Episodes</a>
+        <a href="dreams.html">Dreams</a>
+    </div>
+</nav>
+
+<div class="controls-container">
+    <div class="search-wrapper">
+        <input type="text" id="char-search" placeholder="Search by name or description...">
+    </div>
+    <div class="tag-filters" id="tag-filters">
+        <button class="filter-tag active" data-tag="all">All</button>
+        <!-- Tags will be populated dynamically -->
+    </div>
+</div>
+
+<main class="character-grid" id="character-grid">
+    <!-- Characters will be populated dynamically -->
+</main>
+
+<script>
+    let characters = [];
+    let activeTag = 'all';
+
+    async function initPage() {
+        try {
+            // 1. Fetch Game Title from Config
+            const configRes = await fetch('data/config.json');
+            const config = await configRes.json();
+            document.getElementById('game-title').innerText = config.gameTitle || "HERETICS";
+
+            // 2. Fetch Characters
+            const charRes = await fetch('data/characters.json');
+            characters = await charRes.json();
+
+            renderTags();
+            renderCharacters();
+        } catch (e) {
+            console.error("Initialization error:", e);
+            document.getElementById('nav-game-title').innerText = "THE VEIL";
+        }
+    }
+
+    function renderTags() {
+        const tagContainer = document.getElementById('tag-filters');
+        const allTags = new Set();
+        characters.forEach(c => c.tags.forEach(t => allTags.add(t)));
+
+        allTags.forEach(tag => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-tag';
+            btn.innerText = tag;
+            btn.dataset.tag = tag;
+            btn.onclick = () => {
+                document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeTag = tag;
+                renderCharacters();
+            };
+            tagContainer.appendChild(btn);
+        });
+
+        document.querySelector('[data-tag="all"]').onclick = (e) => {
+            document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            activeTag = 'all';
+            renderCharacters();
+        };
+    }
+
+    function renderCharacters() {
+        const grid = document.getElementById('character-grid');
+        const searchTerm = document.getElementById('char-search').value.toLowerCase();
+
+        grid.innerHTML = '';
+
+        const filtered = characters.filter(c => {
+            const matchesSearch = c.name.toLowerCase().includes(searchTerm) ||
+                c.description.toLowerCase().includes(searchTerm);
+            const matchesTag = activeTag === 'all' || c.tags.includes(activeTag);
+            return matchesSearch && matchesTag;
+        });
+
+        filtered.forEach(c => {
+            const card = document.createElement('div');
+            card.className = 'char-card';
+            card.innerHTML = `
+                <img src="${c.image}" alt="${c.name}" class="char-img" onerror="this.src='https://via.placeholder.com/100?text=?'">
+                <div class="char-info">
+                    <h3 class="char-name">${c.name}</h3>
+                    <p class="char-desc">${c.description}</p>
+                    <div class="char-tags">
+                        ${c.tags.map(t => `<span class="mini-tag">${t}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    document.getElementById('char-search').oninput = renderCharacters;
+
+    // Use DOMContentLoaded for WebStorm environments to ensure elements are ready
+    window.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>

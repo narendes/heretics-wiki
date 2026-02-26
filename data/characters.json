@@ -1,0 +1,51 @@
+[
+  {
+    "id": "ash-higdon",
+    "name": "Ashley \"Ash\" Higdon",
+    "image": "assets/images/ash.jpg",
+    "description": "A rebellious goth girl who enjoys reading tarot cards and raising her mother's blood pressure.",
+    "tags": ["PC"]
+  },
+  {
+    "id": "dirk-momsen",
+    "name": "Dirk Momsen",
+    "image": "assets/images/dirk.jpg",
+    "description": "Part-time Blockbuster employee, full-time punk. Currently coping with a recent, tragic event.",
+    "tags": ["PC"]
+  },
+  {
+    "id": "em-lazareva",
+    "name": "Emerson \"Em\" Lazareva",
+    "image": "assets/images/em.jpg",
+    "description": "An inventor, a techie, a zoologist. Often causing good trouble, with her spider sidekick by her side.",
+    "tags": ["PC"]
+  },
+  {
+    "id": "hannah-marin",
+    "name": "Hannah Marin",
+    "image": "assets/images/em.jpg",
+    "description": "A star cheerleader on and off the court. Her heart often exceeds her smarts.",
+    "tags": ["PC"]
+  },
+  {
+    "id": "michelle-maddox",
+    "name": "Michelle Maddox",
+    "image": "assets/images/em.jpg",
+    "description": "A Student Council Vice President destined to be the first female President of the United States.",
+    "tags": ["PC"]
+  },
+  {
+    "id": "nikhil-khan",
+    "name": "Nikhil \"Nick\" Khan",
+    "image": "assets/images/em.jpg",
+    "description": "A football team captain who yearns for heroism in combat (and secretly for the stage).",
+    "tags": ["PC"]
+  },
+  {
+    "id": "miranda-po",
+    "name": "Miranda Po (Pomona of the Myre)",
+    "image": "assets/images/miranda-po.png",
+    "description": "Rebel leader-turned high school English teacher. Survives assassination attempts and PT conferences with equal grace.",
+    "tags": ["NPC"]
+  }
+]
