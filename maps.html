@@ -149,7 +149,7 @@
             padding: 0;
             overflow: hidden;
             transform-origin: 0 0;
-            visibility: hidden; /* Hide until we know dimensions */
+            visibility: hidden;
         }
 
         #reality-map iframe {
@@ -243,11 +243,10 @@
     let currentZoom = 1.0;
     const minZoom = 0.1;
     const maxZoom = 4.0;
-
-    // Fallback values, will be overwritten by dynamic detection
     let baseWidth = 3000;
     let baseHeight = 2000;
     let config = {};
+    let mapInitialized = false;
 
     async function initPage() {
         try {
@@ -260,58 +259,74 @@
 
         const iframe = document.getElementById('magical-map-iframe');
 
-        // Listen for SVG load to detect actual dimensions
-        iframe.addEventListener('load', () => {
-            detectMapDimensions();
-            applyZoom();
-            iframe.style.visibility = 'visible';
+        // Fix: Reliable loading check
+        const onMapLoad = () => {
+            if (mapInitialized) return;
 
-            const container = document.getElementById('magical-map-scroll-container');
-            if (config.startingMapX || config.startingMapY) {
-                container.scrollLeft = config.startingMapX || 0;
-                container.scrollTop = config.startingMapY || 0;
+            // Try to detect dimensions
+            const success = detectMapDimensions();
+            if (success) {
+                applyZoom();
+                iframe.style.visibility = 'visible';
+                mapInitialized = true;
+
+                // Position map
+                const container = document.getElementById('magical-map-scroll-container');
+                if (config.startingMapX || config.startingMapY) {
+                    container.scrollLeft = config.startingMapX || 0;
+                    container.scrollTop = config.startingMapY || 0;
+                } else {
+                    // Auto-center if no config
+                    container.scrollLeft = (baseWidth / 2) - (container.clientWidth / 2);
+                    container.scrollTop = (baseHeight / 2) - (container.clientHeight / 2);
+                }
             }
-        });
+        };
+
+        iframe.addEventListener('load', onMapLoad);
+
+        // Fix: Check if already loaded (cache/fast load)
+        if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+            onMapLoad();
+        }
     }
 
     function detectMapDimensions() {
         const iframe = document.getElementById('magical-map-iframe');
         try {
             const svgDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const svgTag = svgDoc.querySelector('svg');
+            if (!svgDoc) return false;
 
-            if (svgTag) {
-                // Try viewBox first (most accurate for SVG)
-                const viewBox = svgTag.viewBox.baseVal;
-                if (viewBox.width && viewBox.height) {
-                    baseWidth = viewBox.width;
-                    baseHeight = viewBox.height;
-                } else {
-                    // Fallback to width/height attributes
-                    const w = parseFloat(svgTag.getAttribute('width'));
-                    const h = parseFloat(svgTag.getAttribute('height'));
-                    if (!isNaN(w) && !isNaN(h)) {
-                        baseWidth = w;
-                        baseHeight = h;
-                    }
+            const svgTag = svgDoc.querySelector('svg');
+            if (!svgTag) return false;
+
+            const viewBox = svgTag.viewBox.baseVal;
+            if (viewBox.width && viewBox.height) {
+                baseWidth = viewBox.width;
+                baseHeight = viewBox.height;
+            } else {
+                const w = parseFloat(svgTag.getAttribute('width'));
+                const h = parseFloat(svgTag.getAttribute('height'));
+                if (!isNaN(w) && !isNaN(h)) {
+                    baseWidth = w;
+                    baseHeight = h;
                 }
-                console.log(`Map Dimensions Detected: ${baseWidth}x${baseHeight}`);
             }
+            return true;
         } catch (e) {
-            console.warn("Could not detect SVG dimensions cross-origin, using fallbacks.");
+            console.warn("Cross-origin or early access error:", e);
+            return false;
         }
     }
 
     function adjustZoom(delta) {
+        if (!mapInitialized) return;
         const container = document.getElementById('magical-map-scroll-container');
-
-        // Mid-point anchoring
         const centerX = container.scrollLeft + container.clientWidth / 2;
         const centerY = container.scrollTop + container.clientHeight / 2;
         const oldZoom = currentZoom;
 
         currentZoom = Math.min(maxZoom, Math.max(minZoom, currentZoom + delta));
-
         const zoomRatio = currentZoom / oldZoom;
         applyZoom();
 
@@ -326,7 +341,6 @@
         const scaledWidth = Math.round(baseWidth * currentZoom);
         const scaledHeight = Math.round(baseHeight * currentZoom);
 
-        // This makes the scrollable area exactly the size of the zoomed map
         iframe.style.width = `${baseWidth}px`;
         iframe.style.height = `${baseHeight}px`;
         iframe.style.transform = `scale(${currentZoom})`;
@@ -353,7 +367,7 @@
             magCont.classList.add('active');
             btnReal.classList.remove('active');
             btnMag.classList.add('active');
-            applyZoom();
+            if (mapInitialized) applyZoom();
         }
     }
 
