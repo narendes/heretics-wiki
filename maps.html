@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Veil | Maps</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --crimson: #8b0000;
+            --gold: #d4af37;
+            --text-main: #e0e0e0;
+            --nav-font: 'Cinzel', serif;
+            --horror-font: 'Crimson Text', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--horror-font);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent body scroll */
+        }
+
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid var(--gold);
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        .nav-logo-link {
+            text-decoration: none;
+            color: var(--gold);
+            font-family: var(--nav-font);
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+        }
+
+        .nav-links a {
+            color: var(--gold);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-family: var(--nav-font);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .map-toggle-bar {
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+            gap: 2rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: 1px solid var(--crimson);
+            color: var(--gold);
+            font-family: var(--nav-font);
+            padding: 0.5rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+        }
+
+        .toggle-btn.active {
+            background: var(--crimson);
+            color: white;
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+        }
+
+        #map-viewport {
+            flex-grow: 1;
+            position: relative;
+            background: #000;
+            overflow: hidden; /* Ensure viewport doesn't scroll */
+        }
+
+        .map-container {
+            position: absolute;
+            inset: 0;
+            display: none;
+        }
+
+        .map-container.active {
+            display: block;
+        }
+
+        /* Container for the magical map to allow scrolling of a zoomed element */
+        #magical-map-scroll-container {
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* This is our one and only scrollbar */
+            background: #000;
+            scrollbar-width: thin;
+            scrollbar-color: var(--crimson) #000;
+            position: relative;
+        }
+
+        /* Custom scrollbar for webkit */
+        #magical-map-scroll-container::-webkit-scrollbar { width: 8px; height: 8px; }
+        #magical-map-scroll-container::-webkit-scrollbar-track { background: #000; }
+        #magical-map-scroll-container::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 4px; }
+
+        /* The Zoom Wrapper holds the iframe and scales it */
+        #zoom-wrapper {
+            transform-origin: 0 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.2s ease-out;
+            display: block;
+            overflow: hidden; /* Prevent internal iframe from showing its own scrollbars */
+        }
+
+        #magical-map-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+            display: block;
+            overflow: hidden; /* Ensure the SVG document doesn't try to scroll internally */
+        }
+
+        #reality-map iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .map-overlay-vignette {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+            z-index: 5;
+        }
+
+        /* Control Overlay */
+        .zoom-controls {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+
+        .zoom-btn {
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            font-family: serif;
+        }
+
+        .zoom-btn:hover {
+            background: var(--crimson);
+            color: white;
+            box-shadow: 0 0 10px var(--crimson);
+        }
+
+        .zoom-indicator {
+            background: rgba(0, 0, 0, 0.85);
+            color: var(--gold);
+            font-family: var(--nav-font);
+            font-size: 0.7rem;
+            text-align: center;
+            padding: 2px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="main-nav">
+    <a href="home.html" class="nav-logo-link" id="nav-game-title">THE VEIL</a>
+    <div class="nav-links">
+        <a href="episodes.html">Episodes</a>
+        <a href="characters.html">Characters</a>
+        <a href="factions.html">Factions</a>
+        <a href="dreams.html">Dreams</a>
+        <a href="maps.html" style="color: var(--crimson)">Maps</a>
+    </div>
+</nav>
+
+<div class="map-toggle-bar">
+    <button class="toggle-btn active" id="btn-reality" onclick="switchMap('reality')">Real World</button>
+    <button class="toggle-btn" id="btn-magical" onclick="switchMap('magical')">Magical Realm</button>
+</div>
+
+<main id="map-viewport">
+    <div id="reality-map" class="map-container active">
+        <iframe src="https://www.google.com/maps/d/embed?mid=1tLukqzW1EpYQuGwgsqKtDYKxtHtEa2M&ehbc=2E312F"></iframe>
+    </div>
+
+    <div id="magical-map" class="map-container">
+        <div class="map-overlay-vignette"></div>
+        <div id="magical-map-scroll-container">
+            <div id="zoom-wrapper">
+                <iframe id="magical-map-iframe" src="assets/maps/test_map.svg" scrolling="no"></iframe>
+            </div>
+        </div>
+
+        <div class="zoom-controls">
+            <button class="zoom-btn" onclick="adjustZoom(0.5)" title="Zoom In">+</button>
+            <div class="zoom-indicator" id="zoom-level">300%</div>
+            <button class="zoom-btn" onclick="adjustZoom(-0.5)" title="Zoom Out">-</button>
+            <button class="zoom-btn" onclick="resetZoom()" title="Reset">⟲</button>
+        </div>
+    </div>
+</main>
+
+<script>
+    let currentZoom = 3.0;
+    const minZoom = 1.0;
+    const maxZoom = 8.0;
+
+    async function initPage() {
+        try {
+            const res = await fetch('data/config.json');
+            if (res.ok) {
+                const config = await res.json();
+                document.getElementById('nav-game-title').innerText = config.gameTitle || "THE VEIL";
+            }
+        } catch (e) { console.error(e); }
+
+        applyZoom();
+    }
+
+    function adjustZoom(delta) {
+        currentZoom = Math.min(maxZoom, Math.max(minZoom, currentZoom + delta));
+        applyZoom();
+    }
+
+    function resetZoom() {
+        currentZoom = 3.0;
+        applyZoom();
+        const container = document.getElementById('magical-map-scroll-container');
+        container.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
+
+    function applyZoom() {
+        const wrapper = document.getElementById('zoom-wrapper');
+        const iframe = document.getElementById('magical-map-iframe');
+        const container = document.getElementById('magical-map-scroll-container');
+
+        // 1. Set the layout size of the wrapper to match the zoom
+        // This makes the parent scroll container recognize the "true" size
+        wrapper.style.width = `${currentZoom * 100}%`;
+        wrapper.style.height = `${currentZoom * 100}%`;
+
+        // 2. Adjust iframe to take up the correct proportion of the new larger wrapper
+        // and scale it up to fill the space
+        iframe.style.width = `${100 / currentZoom}%`;
+        iframe.style.height = `${100 / currentZoom}%`;
+        iframe.style.transform = `scale(${currentZoom})`;
+        iframe.style.transformOrigin = '0 0';
+
+        // Update UI indicator
+        document.getElementById('zoom-level').innerText = `${Math.round(currentZoom * 100)}%`;
+    }
+
+    function switchMap(type) {
+        const realCont = document.getElementById('reality-map');
+        const magCont = document.getElementById('magical-map');
+        const btnReal = document.getElementById('btn-reality');
+        const btnMag = document.getElementById('btn-magical');
+
+        if (type === 'reality') {
+            realCont.classList.add('active');
+            magCont.classList.remove('active');
+            btnReal.classList.add('active');
+            btnMag.classList.remove('active');
+        } else {
+            realCont.classList.remove('active');
+            magCont.classList.add('active');
+            btnReal.classList.remove('active');
+            btnMag.classList.add('active');
+            applyZoom();
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>
