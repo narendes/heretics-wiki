@@ -229,7 +229,6 @@
             <button class="zoom-btn" onclick="adjustZoom(0.2)" title="Zoom In">+</button>
             <div class="zoom-indicator" id="zoom-level">100%</div>
             <button class="zoom-btn" onclick="adjustZoom(-0.2)" title="Zoom Out">-</button>
-            <button class="zoom-btn" onclick="resetZoom()" title="Reset View">⟲</button>
         </div>
     </div>
 </main>
@@ -330,17 +329,6 @@
         wrapper.style.height = `${scaledHeight}px`;
 
         document.getElementById('zoom-level').innerText = `${Math.round(currentZoom * 100)}%`;
-    }
-
-    function resetZoom() {
-        currentZoom = 1.0;
-        applyZoom();
-        const container = document.getElementById('magical-map-scroll-container');
-        container.scrollTo({
-            left: config.startingMapX || 0,
-            top: config.startingMapY || 0,
-            behavior: 'smooth'
-        });
     }
 
     function switchMap(type) {
