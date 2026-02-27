@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Veil | Maps</title>
+    <title>HERETICS | Maps</title>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -35,7 +35,6 @@
             background: rgba(0, 0, 0, 0.8);
             border-bottom: 1px solid var(--gold);
             box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-            flex-shrink: 0;
         }
 
         .nav-logo-link {
@@ -44,7 +43,10 @@
             font-family: var(--nav-font);
             font-size: 1.6rem;
             letter-spacing: 2px;
+            transition: color 0.3s;
         }
+
+        .nav-logo-link:hover { color: var(--crimson); }
 
         .nav-links a {
             color: var(--gold);
@@ -52,8 +54,12 @@
             margin-left: 2rem;
             font-family: var(--nav-font);
             font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
             text-transform: uppercase;
         }
+
+        .nav-links a:hover { color: var(--crimson); text-shadow: 0 0 8px var(--crimson); }
 
         .map-toggle-bar {
             background: #0a0a0a;
@@ -197,7 +203,7 @@
 <body>
 
 <nav class="main-nav">
-    <a href="home.html" class="nav-logo-link" id="nav-game-title">THE VEIL</a>
+    <a href="home.html" class="nav-logo-link" id="nav-game-title">HERETICS</a>
     <div class="nav-links">
         <a href="characters.html">Characters</a>
         <a href="maps.html" style="color: var(--crimson)">Maps</a>
@@ -208,8 +214,8 @@
 </nav>
 
 <div class="map-toggle-bar">
-    <button class="toggle-btn active" id="btn-reality" onclick="switchMap('reality')">Real World</button>
-    <button class="toggle-btn" id="btn-magical" onclick="switchMap('magical')">Magical Realm</button>
+    <button class="toggle-btn active" id="btn-reality" onclick="switchMap('reality')">St. Louis</button>
+    <button class="toggle-btn" id="btn-magical" onclick="switchMap('magical')">Greanor</button>
 </div>
 
 <main id="map-viewport">
@@ -248,7 +254,7 @@
             const res = await fetch('data/config.json');
             if (res.ok) {
                 config = await res.json();
-                document.getElementById('nav-game-title').innerText = config.gameTitle || "THE VEIL";
+                document.getElementById('nav-game-title').innerText = config.gameTitle || "HERETICS";
             }
         } catch (e) { console.error(e); }
 
