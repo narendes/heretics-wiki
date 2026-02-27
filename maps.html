@@ -31,19 +31,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 3rem;
-            background: rgba(0, 0, 0, 0.9);
+            padding: 1.5rem 3rem;
+            background: rgba(0, 0, 0, 0.8);
             border-bottom: 1px solid var(--gold);
-            z-index: 1000;
-            flex-shrink: 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
         }
 
         .nav-logo-link {
             text-decoration: none;
             color: var(--gold);
             font-family: var(--nav-font);
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             letter-spacing: 2px;
+            transition: color 0.3s;
         }
 
         .nav-links a {
@@ -51,7 +51,9 @@
             text-decoration: none;
             margin-left: 2rem;
             font-family: var(--nav-font);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
             text-transform: uppercase;
         }
 
@@ -199,11 +201,11 @@
 <nav class="main-nav">
     <a href="home.html" class="nav-logo-link" id="nav-game-title">THE VEIL</a>
     <div class="nav-links">
-        <a href="episodes.html">Episodes</a>
         <a href="characters.html">Characters</a>
-        <a href="factions.html">Factions</a>
-        <a href="dreams.html">Dreams</a>
         <a href="maps.html" style="color: var(--crimson)">Maps</a>
+        <a href="factions.html">Factions</a>
+        <a href="episodes.html">Episodes</a>
+        <a href="dreams.html">Dreams</a>
     </div>
 </nav>
 
