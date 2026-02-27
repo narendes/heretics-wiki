@@ -24,7 +24,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Prevent body scroll */
+            overflow: hidden;
         }
 
         .main-nav {
@@ -35,6 +35,7 @@
             background: rgba(0, 0, 0, 0.8);
             border-bottom: 1px solid var(--gold);
             box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+            flex-shrink: 0;
         }
 
         .nav-logo-link {
@@ -91,7 +92,7 @@
             flex-grow: 1;
             position: relative;
             background: #000;
-            overflow: hidden; /* Ensure viewport doesn't scroll */
+            overflow: hidden;
         }
 
         .map-container {
@@ -104,39 +105,34 @@
             display: block;
         }
 
-        /* Container for the magical map to allow scrolling of a zoomed element */
         #magical-map-scroll-container {
             width: 100%;
             height: 100%;
-            overflow: auto; /* This is our one and only scrollbar */
+            overflow: auto;
             background: #000;
             scrollbar-width: thin;
             scrollbar-color: var(--crimson) #000;
             position: relative;
         }
 
-        /* Custom scrollbar for webkit */
         #magical-map-scroll-container::-webkit-scrollbar { width: 8px; height: 8px; }
         #magical-map-scroll-container::-webkit-scrollbar-track { background: #000; }
         #magical-map-scroll-container::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 4px; }
 
-        /* The Zoom Wrapper holds the iframe and scales it */
         #zoom-wrapper {
             transform-origin: 0 0;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.2s ease-out;
             display: block;
-            overflow: hidden; /* Prevent internal iframe from showing its own scrollbars */
+            position: relative;
         }
 
         #magical-map-iframe {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
             border: none;
             background: #000;
             display: block;
-            overflow: hidden; /* Ensure the SVG document doesn't try to scroll internally */
+            overflow: hidden;
         }
 
         #reality-map iframe {
@@ -153,7 +149,6 @@
             z-index: 5;
         }
 
-        /* Control Overlay */
         .zoom-controls {
             position: absolute;
             bottom: 2rem;
@@ -198,7 +193,7 @@
 </head>
 <body>
 
-<nav class="main-nav">
+<nav class="main-nav" id="top-nav">
     <a href="home.html" class="nav-logo-link" id="nav-game-title">THE VEIL</a>
     <div class="nav-links">
         <a href="characters.html">Characters</a>
@@ -209,7 +204,7 @@
     </div>
 </nav>
 
-<div class="map-toggle-bar">
+<div class="map-toggle-bar" id="toggle-bar">
     <button class="toggle-btn active" id="btn-reality" onclick="switchMap('reality')">Real World</button>
     <button class="toggle-btn" id="btn-magical" onclick="switchMap('magical')">Magical Realm</button>
 </div>
@@ -238,19 +233,33 @@
 
 <script>
     let currentZoom = 3.0;
-    const minZoom = 1.0;
+    const minZoom = 0.5;
     const maxZoom = 8.0;
+    // Map base "natural" size - should ideally match your SVG's viewbox or desired detail level
+    const BASE_MAP_WIDTH = 3000;
+    const BASE_MAP_HEIGHT = 2000;
+    let config = {};
 
     async function initPage() {
         try {
             const res = await fetch('data/config.json');
             if (res.ok) {
-                const config = await res.json();
+                config = await res.json();
                 document.getElementById('nav-game-title').innerText = config.gameTitle || "THE VEIL";
             }
         } catch (e) { console.error(e); }
 
         applyZoom();
+
+        // Apply starting position from config
+        if (config.startingMapX !== undefined || config.startingMapY !== undefined) {
+            const container = document.getElementById('magical-map-scroll-container');
+            container.scrollTo({
+                left: config.startingMapX || 0,
+                top: config.startingMapY || 0,
+                behavior: 'instant'
+            });
+        }
     }
 
     function adjustZoom(delta) {
@@ -262,7 +271,11 @@
         currentZoom = 3.0;
         applyZoom();
         const container = document.getElementById('magical-map-scroll-container');
-        container.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        container.scrollTo({
+            left: config.startingMapX || 0,
+            top: config.startingMapY || 0,
+            behavior: 'smooth'
+        });
     }
 
     function applyZoom() {
@@ -270,17 +283,28 @@
         const iframe = document.getElementById('magical-map-iframe');
         const container = document.getElementById('magical-map-scroll-container');
 
-        // 1. Set the layout size of the wrapper to match the zoom
-        // This makes the parent scroll container recognize the "true" size
-        wrapper.style.width = `${currentZoom * 100}%`;
-        wrapper.style.height = `${currentZoom * 100}%`;
+        // We use a large base size so the map is detailed.
+        // Then we scale that base size by currentZoom.
+        const scaledWidth = BASE_MAP_WIDTH * currentZoom;
+        const scaledHeight = BASE_MAP_HEIGHT * currentZoom;
 
-        // 2. Adjust iframe to take up the correct proportion of the new larger wrapper
-        // and scale it up to fill the space
-        iframe.style.width = `${100 / currentZoom}%`;
-        iframe.style.height = `${100 / currentZoom}%`;
+        // Add extra scrollable "buffer" space around the map (10% of window size)
+        const bufferX = window.innerWidth * 0.1;
+        const bufferY = window.innerHeight * 0.1;
+
+        // The wrapper defines the scrollable area
+        wrapper.style.width = `${scaledWidth + (bufferX * 2)}px`;
+        wrapper.style.height = `${scaledHeight + (bufferY * 2)}px`;
+
+        // The iframe is sized to the base "natural" resolution
+        iframe.style.width = `${BASE_MAP_WIDTH}px`;
+        iframe.style.height = `${BASE_MAP_HEIGHT}px`;
+
+        // We transform (scale) the iframe and position it slightly inside the buffer
         iframe.style.transform = `scale(${currentZoom})`;
         iframe.style.transformOrigin = '0 0';
+        iframe.style.left = `${bufferX}px`;
+        iframe.style.top = `${bufferY}px`;
 
         // Update UI indicator
         document.getElementById('zoom-level').innerText = `${Math.round(currentZoom * 100)}%`;
@@ -302,10 +326,12 @@
             magCont.classList.add('active');
             btnReal.classList.remove('active');
             btnMag.classList.add('active');
+            // Recalculate zoom sizing when switching to ensure wrapper is ready
             applyZoom();
         }
     }
 
+    window.addEventListener('resize', applyZoom);
     window.addEventListener('DOMContentLoaded', initPage);
 </script>
 </body>
