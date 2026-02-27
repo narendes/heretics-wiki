@@ -44,7 +44,6 @@
             font-family: var(--nav-font);
             font-size: 1.6rem;
             letter-spacing: 2px;
-            transition: color 0.3s;
         }
 
         .nav-links a {
@@ -53,8 +52,6 @@
             margin-left: 2rem;
             font-family: var(--nav-font);
             font-size: 0.85rem;
-            letter-spacing: 1px;
-            transition: 0.3s;
             text-transform: uppercase;
         }
 
@@ -78,14 +75,12 @@
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 2px;
             font-size: 0.8rem;
         }
 
         .toggle-btn.active {
             background: var(--crimson);
             color: white;
-            box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
         }
 
         #map-viewport {
@@ -101,10 +96,9 @@
             display: none;
         }
 
-        .map-container.active {
-            display: block;
-        }
+        .map-container.active { display: block; }
 
+        /* CRIMSON SCROLLBARS */
         #magical-map-scroll-container {
             width: 100%;
             height: 100%;
@@ -112,27 +106,44 @@
             background: #000;
             scrollbar-width: thin;
             scrollbar-color: var(--crimson) #000;
-            position: relative;
         }
 
-        #magical-map-scroll-container::-webkit-scrollbar { width: 8px; height: 8px; }
-        #magical-map-scroll-container::-webkit-scrollbar-track { background: #000; }
-        #magical-map-scroll-container::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 4px; }
+        #magical-map-scroll-container::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        #magical-map-scroll-container::-webkit-scrollbar-track {
+            background: #050505;
+        }
+
+        #magical-map-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--crimson);
+            border: 2px solid #050505;
+            border-radius: 5px;
+        }
+
+        #magical-map-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #a30000;
+        }
 
         #zoom-wrapper {
-            transform-origin: 0 0;
-            display: block;
-            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            margin: 0;
+            padding: 0;
+            line-height: 0;
         }
 
         #magical-map-iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
             border: none;
             background: #000;
             display: block;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
+            transform-origin: 0 0;
+            visibility: hidden; /* Hide until we know dimensions */
         }
 
         #reality-map iframe {
@@ -152,7 +163,7 @@
         .zoom-controls {
             position: absolute;
             bottom: 2rem;
-            right: 2rem;
+            right: 2.5rem;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -170,14 +181,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.2s;
-            font-family: serif;
-        }
-
-        .zoom-btn:hover {
-            background: var(--crimson);
-            color: white;
-            box-shadow: 0 0 10px var(--crimson);
         }
 
         .zoom-indicator {
@@ -193,7 +196,7 @@
 </head>
 <body>
 
-<nav class="main-nav" id="top-nav">
+<nav class="main-nav">
     <a href="home.html" class="nav-logo-link" id="nav-game-title">THE VEIL</a>
     <div class="nav-links">
         <a href="characters.html">Characters</a>
@@ -204,7 +207,7 @@
     </div>
 </nav>
 
-<div class="map-toggle-bar" id="toggle-bar">
+<div class="map-toggle-bar">
     <button class="toggle-btn active" id="btn-reality" onclick="switchMap('reality')">Real World</button>
     <button class="toggle-btn" id="btn-magical" onclick="switchMap('magical')">Magical Realm</button>
 </div>
@@ -218,26 +221,27 @@
         <div class="map-overlay-vignette"></div>
         <div id="magical-map-scroll-container">
             <div id="zoom-wrapper">
-                <iframe id="magical-map-iframe" src="assets/maps/test_map.svg" scrolling="no"></iframe>
+                <iframe id="magical-map-iframe" src="assets/maps/test_map.svg"></iframe>
             </div>
         </div>
 
         <div class="zoom-controls">
-            <button class="zoom-btn" onclick="adjustZoom(0.5)" title="Zoom In">+</button>
-            <div class="zoom-indicator" id="zoom-level">300%</div>
-            <button class="zoom-btn" onclick="adjustZoom(-0.5)" title="Zoom Out">-</button>
-            <button class="zoom-btn" onclick="resetZoom()" title="Reset">⟲</button>
+            <button class="zoom-btn" onclick="adjustZoom(0.2)" title="Zoom In">+</button>
+            <div class="zoom-indicator" id="zoom-level">100%</div>
+            <button class="zoom-btn" onclick="adjustZoom(-0.2)" title="Zoom Out">-</button>
+            <button class="zoom-btn" onclick="resetZoom()" title="Reset View">⟲</button>
         </div>
     </div>
 </main>
 
 <script>
-    let currentZoom = 3.0;
-    const minZoom = 0.5;
-    const maxZoom = 8.0;
-    // Map base "natural" size - should ideally match your SVG's viewbox or desired detail level
-    const BASE_MAP_WIDTH = 3000;
-    const BASE_MAP_HEIGHT = 2000;
+    let currentZoom = 1.0;
+    const minZoom = 0.1;
+    const maxZoom = 4.0;
+
+    // Fallback values, will be overwritten by dynamic detection
+    let baseWidth = 3000;
+    let baseHeight = 2000;
     let config = {};
 
     async function initPage() {
@@ -249,26 +253,87 @@
             }
         } catch (e) { console.error(e); }
 
-        applyZoom();
+        const iframe = document.getElementById('magical-map-iframe');
 
-        // Apply starting position from config
-        if (config.startingMapX !== undefined || config.startingMapY !== undefined) {
+        // Listen for SVG load to detect actual dimensions
+        iframe.addEventListener('load', () => {
+            detectMapDimensions();
+            applyZoom();
+            iframe.style.visibility = 'visible';
+
             const container = document.getElementById('magical-map-scroll-container');
-            container.scrollTo({
-                left: config.startingMapX || 0,
-                top: config.startingMapY || 0,
-                behavior: 'instant'
-            });
+            if (config.startingMapX || config.startingMapY) {
+                container.scrollLeft = config.startingMapX || 0;
+                container.scrollTop = config.startingMapY || 0;
+            }
+        });
+    }
+
+    function detectMapDimensions() {
+        const iframe = document.getElementById('magical-map-iframe');
+        try {
+            const svgDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const svgTag = svgDoc.querySelector('svg');
+
+            if (svgTag) {
+                // Try viewBox first (most accurate for SVG)
+                const viewBox = svgTag.viewBox.baseVal;
+                if (viewBox.width && viewBox.height) {
+                    baseWidth = viewBox.width;
+                    baseHeight = viewBox.height;
+                } else {
+                    // Fallback to width/height attributes
+                    const w = parseFloat(svgTag.getAttribute('width'));
+                    const h = parseFloat(svgTag.getAttribute('height'));
+                    if (!isNaN(w) && !isNaN(h)) {
+                        baseWidth = w;
+                        baseHeight = h;
+                    }
+                }
+                console.log(`Map Dimensions Detected: ${baseWidth}x${baseHeight}`);
+            }
+        } catch (e) {
+            console.warn("Could not detect SVG dimensions cross-origin, using fallbacks.");
         }
     }
 
     function adjustZoom(delta) {
+        const container = document.getElementById('magical-map-scroll-container');
+
+        // Mid-point anchoring
+        const centerX = container.scrollLeft + container.clientWidth / 2;
+        const centerY = container.scrollTop + container.clientHeight / 2;
+        const oldZoom = currentZoom;
+
         currentZoom = Math.min(maxZoom, Math.max(minZoom, currentZoom + delta));
+
+        const zoomRatio = currentZoom / oldZoom;
         applyZoom();
+
+        container.scrollLeft = (centerX * zoomRatio) - container.clientWidth / 2;
+        container.scrollTop = (centerY * zoomRatio) - container.clientHeight / 2;
+    }
+
+    function applyZoom() {
+        const iframe = document.getElementById('magical-map-iframe');
+        const wrapper = document.getElementById('zoom-wrapper');
+
+        const scaledWidth = Math.round(baseWidth * currentZoom);
+        const scaledHeight = Math.round(baseHeight * currentZoom);
+
+        // This makes the scrollable area exactly the size of the zoomed map
+        iframe.style.width = `${baseWidth}px`;
+        iframe.style.height = `${baseHeight}px`;
+        iframe.style.transform = `scale(${currentZoom})`;
+
+        wrapper.style.width = `${scaledWidth}px`;
+        wrapper.style.height = `${scaledHeight}px`;
+
+        document.getElementById('zoom-level').innerText = `${Math.round(currentZoom * 100)}%`;
     }
 
     function resetZoom() {
-        currentZoom = 3.0;
+        currentZoom = 1.0;
         applyZoom();
         const container = document.getElementById('magical-map-scroll-container');
         container.scrollTo({
@@ -276,38 +341,6 @@
             top: config.startingMapY || 0,
             behavior: 'smooth'
         });
-    }
-
-    function applyZoom() {
-        const wrapper = document.getElementById('zoom-wrapper');
-        const iframe = document.getElementById('magical-map-iframe');
-        const container = document.getElementById('magical-map-scroll-container');
-
-        // We use a large base size so the map is detailed.
-        // Then we scale that base size by currentZoom.
-        const scaledWidth = BASE_MAP_WIDTH * currentZoom;
-        const scaledHeight = BASE_MAP_HEIGHT * currentZoom;
-
-        // Add extra scrollable "buffer" space around the map (10% of window size)
-        const bufferX = window.innerWidth * 0.1;
-        const bufferY = window.innerHeight * 0.1;
-
-        // The wrapper defines the scrollable area
-        wrapper.style.width = `${scaledWidth + (bufferX * 2)}px`;
-        wrapper.style.height = `${scaledHeight + (bufferY * 2)}px`;
-
-        // The iframe is sized to the base "natural" resolution
-        iframe.style.width = `${BASE_MAP_WIDTH}px`;
-        iframe.style.height = `${BASE_MAP_HEIGHT}px`;
-
-        // We transform (scale) the iframe and position it slightly inside the buffer
-        iframe.style.transform = `scale(${currentZoom})`;
-        iframe.style.transformOrigin = '0 0';
-        iframe.style.left = `${bufferX}px`;
-        iframe.style.top = `${bufferY}px`;
-
-        // Update UI indicator
-        document.getElementById('zoom-level').innerText = `${Math.round(currentZoom * 100)}%`;
     }
 
     function switchMap(type) {
@@ -326,12 +359,10 @@
             magCont.classList.add('active');
             btnReal.classList.remove('active');
             btnMag.classList.add('active');
-            // Recalculate zoom sizing when switching to ensure wrapper is ready
             applyZoom();
         }
     }
 
-    window.addEventListener('resize', applyZoom);
     window.addEventListener('DOMContentLoaded', initPage);
 </script>
 </body>
