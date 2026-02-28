@@ -1,0 +1,20 @@
+[
+  {
+    "name": "The Toiler's Revolt",
+    "leader": "Pomona of the Myre",
+    "members": ["Sylvano of the Myre", "Applebee the Myrehare"],
+    "summary": "Originating as a small rebellion in the Myre, the Toiler's Revolt later expanded across Tallura and challenged Queen Cereba herself. Before Pomona could depose Cereba, the Archpriest Vezaroth successfully resurrected a peasant's deceased newborn, reinvigorating the Elven religion and decimating the rebellion. Pomona eventually fled through a portal to Oakville, Missouri to escape the Tallurian Military."
+  },
+  {
+    "name": "The Tallurian Kingdom",
+    "leader": "Queen Cereba",
+    "members": ["Rautha", "Archpriest Vezaroth"],
+    "summary": "The High Elven rulers of Tallura, the Elven homeland. Queen Cereba has long ruled the land, leading an ongoing war against the Dwarven Kingdom, Aeirgard. After being threatened by the Toiler's Revolt, the Tallurian Kingdom was rejuvenated through Vezaroth's resurrection of a peasant's baby. Now the Tallurians worship a single God, Rautha, and are dealing with a growing pandemic of a strange red substance called the Rust."
+  },
+  {
+    "name": "The Devoured Knights",
+    "leader": "The Apostate",
+    "members": ["Recreant Kha'Ragul", "Recreant Darian", "Recreant Seyla", "Cynic Nikhil Khan"],
+    "summary": "An order of knights, most of whom are infected with Rust, seeking to depose Queen Cereba and install the Dwarven King, Thorvald IV, as interim ruler of Tallura. The order is led by the mysterious Apostate and his Recreant Circle. The human Nikhil Khan was recently initiated into the order by Recreant Kha'Ragul."
+  }
+]

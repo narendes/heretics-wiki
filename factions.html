@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HERETICS | Factions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #050505;
+      --crimson: #8b0000;
+      --gold: #d4af37;
+      --text-main: #e0e0e0;
+      --nav-font: 'Cinzel', serif;
+      --horror-font: 'Crimson Text', serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--horror-font);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Nav (Synced with Maps/Home) */
+    .main-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      background: rgba(0, 0, 0, 0.8);
+      border-bottom: 1px solid var(--gold);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo-link {
+      text-decoration: none;
+      color: var(--gold);
+      font-family: var(--nav-font);
+      font-size: 1.6rem;
+      letter-spacing: 2px;
+    }
+
+    .nav-links a {
+      color: var(--gold);
+      text-decoration: none;
+      margin-left: 2rem;
+      font-family: var(--nav-font);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .nav-links a:hover { color: var(--crimson); }
+
+    /* Search Section */
+    .controls-container {
+      max-width: 1000px;
+      margin: 4rem auto 2rem;
+      padding: 0 2rem;
+    }
+
+    .search-wrapper {
+      position: relative;
+    }
+
+    #faction-search {
+      width: 100%;
+      background: rgba(20, 20, 20, 0.8);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 1rem 1.5rem;
+      font-family: var(--horror-font);
+      color: var(--text-main);
+      font-size: 1.2rem;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    #faction-search:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+    }
+
+    /* Faction List */
+    .factions-container {
+      max-width: 1000px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+    }
+
+    .faction-item {
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      margin-bottom: 1rem;
+    }
+
+    .faction-item.hidden {
+      display: none;
+    }
+
+    .faction-trigger {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 1.5rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.3s;
+    }
+
+    .faction-name {
+      font-family: var(--nav-font);
+      color: var(--gold);
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      transition: 0.3s;
+    }
+
+    .faction-trigger:hover .faction-name {
+      color: var(--crimson);
+      padding-left: 10px;
+    }
+
+    .expand-icon {
+      color: var(--gold);
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+
+    .faction-item.active .expand-icon {
+      transform: rotate(180deg);
+      color: var(--crimson);
+    }
+
+    .faction-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-out;
+    }
+
+    .faction-item.active .faction-content {
+      max-height: 1000px;
+      padding-bottom: 2rem;
+    }
+
+    .faction-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      border-left: 2px solid var(--crimson);
+      padding-left: 1.5rem;
+    }
+
+    .meta-label {
+      font-family: var(--nav-font);
+      font-size: 0.75rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 0.5rem;
+      opacity: 0.8;
+    }
+
+    .meta-value {
+      font-size: 1.1rem;
+      color: var(--text-main);
+    }
+
+    .member-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .member-chip {
+      background: rgba(139, 0, 0, 0.1);
+      border: 1px solid rgba(139, 0, 0, 0.3);
+      padding: 2px 10px;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .faction-summary {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #aaa;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .faction-meta { grid-template-columns: 1fr; }
+      .main-nav { padding: 1rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="main-nav">
+  <a href="home.html" class="nav-logo-link" id="nav-game-title">HERETICS</a>
+  <div class="nav-links">
+    <a href="characters.html">Characters</a>
+    <a href="maps.html">Maps</a>
+    <a href="factions.html" style="color: var(--crimson)">Factions</a>
+    <a href="episodes.html">Episodes</a>
+    <a href="dreams.html">Dreams</a>
+  </div>
+</nav>
+
+<div class="controls-container">
+  <div class="search-wrapper">
+    <input type="text" id="faction-search" placeholder="Search factions, leaders, or descriptions...">
+  </div>
+</div>
+
+<main class="factions-container" id="factions-list">
+  <!-- Factions will be injected here -->
+</main>
+
+<script>
+  let factions = [];
+
+  async function initPage() {
+    try {
+      // 1. Fetch Game Title
+      const configRes = await fetch('data/config.json');
+      if (configRes.ok) {
+        const config = await configRes.json();
+        document.getElementById('nav-game-title').innerText = config.gameTitle || "HERETICS";
+      }
+
+      // 2. Fetch Faction Data
+      const factionRes = await fetch('data/factions.json');
+      if (factionRes.ok) {
+        factions = await factionRes.json();
+        renderFactions();
+      }
+    } catch (e) { console.error("Initialization error:", e); }
+
+    // Setup search listener
+    document.getElementById('faction-search').addEventListener('input', filterFactions);
+  }
+
+  function renderFactions() {
+    const container = document.getElementById('factions-list');
+    container.innerHTML = factions.map((f, index) => `
+            <div class="faction-item" id="faction-${index}">
+                <button class="faction-trigger" onclick="toggleFaction(${index})">
+                    <span class="faction-name">${f.name}</span>
+                    <span class="expand-icon">▼</span>
+                </button>
+                <div class="faction-content">
+                    <div class="faction-meta">
+                        <div>
+                            <span class="meta-label">Leader</span>
+                            <div class="meta-value">${f.leader}</div>
+                        </div>
+                        <div>
+                            <span class="meta-label">Known Members</span>
+                            <div class="member-chips">
+                                ${f.members.map(m => `<span class="member-chip">${m}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faction-summary">
+                        ${f.summary}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+  }
+
+  function toggleFaction(index) {
+    const item = document.getElementById(`faction-${index}`);
+    const isActive = item.classList.contains('active');
+
+    // Close others
+    document.querySelectorAll('.faction-item').forEach(el => el.classList.remove('active'));
+
+    // Toggle current
+    if (!isActive) {
+      item.classList.add('active');
+    }
+  }
+
+  function filterFactions() {
+    const searchTerm = document.getElementById('faction-search').value.toLowerCase();
+
+    factions.forEach((f, index) => {
+      const item = document.getElementById(`faction-${index}`);
+      if (!item) return;
+
+      const matchesSearch =
+              f.name.toLowerCase().includes(searchTerm) ||
+              f.leader.toLowerCase().includes(searchTerm) ||
+              f.summary.toLowerCase().includes(searchTerm) ||
+              f.members.some(m => m.toLowerCase().includes(searchTerm));
+
+      if (matchesSearch) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+        item.classList.remove('active');
+      }
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>
