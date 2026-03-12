@@ -256,7 +256,7 @@
             const config = await response.json();
 
             // 2. Update Basic UI
-            document.getElementById('game-title').innerText = config.gameTitle || "THE VEIL";
+            document.getElementById('game-title').innerText = config.gameTitle || "HERETICS";
             document.getElementById('next-session-date').innerText = config.nextSession || "TBD";
             document.getElementById('last-synopsis').innerText = config.lastSynopsis || "Recap pending...";
             document.getElementById('pc-name').innerText = config.featuredPC?.name || "Unknown";
